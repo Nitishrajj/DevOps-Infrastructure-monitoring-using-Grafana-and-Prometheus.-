@@ -1,0 +1,8 @@
+global:
+#Scrape_interval is the interval between data getting scraped from the server
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+#We can add our servers from which we want to scrape data from.
+            - targets: ['Server IP add 1','Server IP add 2']
