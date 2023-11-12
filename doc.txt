@@ -1,0 +1,151 @@
+STEP 1  (Writing scripts which will be using CPU and memory to generate graphs )
+
+	• Creating scripts to run on the nodes (Here we have used python). These scripts will run continuously with help of Jenkins cron job (cron job is like a scheduling job in Jenkins which will help us schedule our day to day tasks in an automated way. So here we have written a cron job(bash script) which will run a python script in the nodes using Jenkins for a particular time which will generate the usage of CPU and memory). 
+	• Below is a basic python script we took in the 2 nodes, this is the same script which is going to run using the Jenkins cron job which we have mentioned above.
+	• These python scripts are written in both the nodes since both the nodes are being monitored here. 
+
+STEP 2 ( Creating cron job in Jenkins )
+
+	• Open your Jenkins account and create a pipeline ( Jenkins pipeline is a way to automate the steps involved in building, testing, and deploying software. It's like a set of instructions or a script that tells Jenkins (a popular automation server) what to do at each stage of your software development process)
+	• Now this pipeline involves bash scripting which will help you to run the python scripts you created in the first step.
+	• Here, we are using Jenkins because we need to automate the whole process instead of us going and sshing into each node. For example, imagine you have 1000 nodes and you need to run scripts in every nodes so you can't ssh into each node and run the script every time you want to, so we use jenkins which will ssh into the node and run the script with set of protocols you assign it to. 
+
+STEP 3 (Setup Prometheus )
+
+	• Prometheus is an open-source monitoring and alerting toolkit designed for reliability and scalability of systems and applications. In simpler terms, it helps you keep an eye on the health of your software and infrastructure.
+
+	• Prometheus works based on a pull model, meaning it actively scrapes or pulls metrics from the configured targets at regular intervals.
+	• It uses node exporter which we need to install on each node to get the metrics(logs/data for monitoring) from the node. 
+	• Configuring Prometheus to scrape metrics from Node Exporter's HTTP endpoint, regularly scraping and storing these metrics, allowing users to query and analyse the data, setting up alerts based on predefined rules, and visualizing the metrics using Prometheus's web UI or third-party tools like Grafana(which we will discuss in below steps).
+	• Installing Prometheus -- >  
+	A.  On Linux based system 
+	1. Check for latest version and use below command to get the           latest version of Prometheus.
+"wget https://github.com/prometheus/prometheus/releases/download/v2.30.3/prometheus-2.30.3.linux-amd64.tar.gz"
+Adding link for references if need (https://prometheus.io/download/ )
+
+2. Extract the archive using the command "tar xvf prometheus-2.30.3.linux-amd64.tar.gz "
+
+3. Move the files to suitable location, for example "/usr/local/bin". Using the command  "
+		sudo mv prometheus-2.30.3.linux-amd64/prometheus /usr/local/bin/
+		sudo mv prometheus-2.30.3.linux-amd64/promtool /usr/local/bin/
+		"
+
+4. Create a configuration file (prometheus.yml)
+This file is basically used to add all the required configurations to your promethues server of what to scrape and from which server to scrap from. You can simply add your server ip add and get metrics using prometheus. You can later use that metrics to create graphs (using Grafana).
+"prometheus.yml "
+		
+		global:
+		  scrape_interval: 15s
+		scrape_configs:
+		  - job_name: 'prometheus'
+		    static_configs:
+		            - targets: ['IP add 1','IP add 2', 'IP add N']
+		
+		5. Run prometheus using the command "prometheus --config.file=prometheus.yml"
+		This will start Prometheus with the configuration file you created.
+
+		6. You can access the metrics using  "
+		http://localhost:9090"
+Prometheus basically uses 9090 port. 
+		
+	B. On windows based system 	1.  Download the latest version of  prometheus using the link provided. 
+"https://prometheus.io/download/"
+
+2. Extract the archive to a location on your system. 
+
+3. Create a configuration file (Prometheus.yml) and start writing your configurations in that. 
+
+Prometheus.yml 
+
+	
+
+
+	global:
+		  scrape_interval: 15s
+		scrape_configs:
+		  - job_name: 'prometheus'
+		    static_configs:
+		      - targets: ['IP add 1','IP add 2', 'IP add n']
+
+4. Run prometheus using the command  "prometheus.exe --config.file=prometheus.yml"
+	
+
+
+
+
+
+
+	C. On MAC 	1.  Download the latest version of  prometheus using the link provided. 
+"https://prometheus.io/download/"
+
+2. Extract the archive to a location on your system using the command "tar xvf prometheus-2.30.3.darwin-amd64.tar.gz" 
+
+3. Move the files to suitable location, for example
+
+		"sudo mv prometheus-2.30.3.darwin-amd64/prometheus /usr/local/bin/
+		sudo mv prometheus-2.30.3.darwin-amd64/promtool /usr/local/bin/"
+
+
+		4. Create a configuration file (prometheus.yml)
+This file is basically used to add all the required configurations to your promethues server of what to scrape and from which server to scrap from. You can simply add your server ip add and get metrics using prometheus. You can later use that metrics to create graphs (using Grafana).
+"prometheus.yml "
+		
+		global:
+		  scrape_interval: 15s
+		scrape_configs:
+		  - job_name: 'prometheus'
+		    static_configs:
+		            - targets: ['IP add 1','IP add 2', 'IP add N']
+
+5. Run prometheus using the command  
+"prometheus --config.file=prometheus.yml"
+
+STEP 4 (Setup node exporter on nodes to get the logs/metrics/data. )
+
+	• Download node exporter latest version using the command "wget https://github.com/prometheus/node_exporter/releases/download/v<version>/node_exporter-<version>.linux-amd64.tar.gz"
+	• Extract the archive using the command "tar xvf node_exporter-<version>.linux-amd64.tar.gz "
+	• Move files into the required location here we have used '/usr/local/bin1'. The command "sudo mv node_exporter-<version>.linux-amd64/node_exporter /usr/local/bin/"
+	• Create a systemd service (
+	To run Node Exporter as a service, you can create a systemd service unit. Create a file named /etc/systemd/system/node_exporter.service with the following content)
+	[Unit]
+	Description=Node Exporter
+	After=network.target
+	[Service]
+	ExecStart=/usr/local/bin/node_exporter
+	[Install]
+	WantedBy=default.target
+	
+	• Reload systemd and start Node Exporter using commands "
+	sudo systemctl daemon-reload
+	sudo systemctl start node_exporter"
+	
+	
+	
+STEP 5 (Install Grafana ) 
+
+	• Add Grafana APT repository to your package manager "
+	sudo apt-get install -y software-properties-common
+	sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main""
+	• Install grafana using the command "
+	sudo apt-get update
+	sudo apt-get install grafana"
+	
+	• Start the grafana service using the command "sudo systemctl start grafana-server"
+You can access the Grafana web interface using "
+	http://your-server-ip:3000"
+	
+
+STEP 6 (Creating data source )
+
+	• Login to grafana using credentials. 
+	• In the Grafana main menu, go to configurations (gear icon on the left sidebar) and select "Data sources"
+	• Click on "Add your first data source" button. 
+	• In the list of available data sources, find and click "Prometheus".
+	• Configure prometheus data sources : 
+Name : Provide a name for your data source 
+HTTP : Set URL to your Prometheus. 
+Access :  Choose "Browser" (this is the default for prometheus). 
+Scrape interval : You can leave this default value. 
+	• Click on "Save and test " to verify the connection. If everything is set up correctly, you should see a green success message. 
+
+**Now your dashboard is ready and your nodes are getting monitored using grafana and promethues. **
