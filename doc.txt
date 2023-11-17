@@ -4,7 +4,7 @@ STEP 1  (Writing scripts which will be using CPU and memory to generate graphs )
 	• Below is a basic python script we took in the 2 nodes, this is the same script which is going to run using the Jenkins cron job which we have mentioned above.
 	• These python scripts are written in both the nodes since both the nodes are being monitored here. 
 
-STEP 2 ( Creating cron job in Jenkins )
+STEP 2 ( Creating cron job in Jenkins ) 
 
 	• Open your Jenkins account and create a pipeline ( Jenkins pipeline is a way to automate the steps involved in building, testing, and deploying software. It's like a set of instructions or a script that tells Jenkins (a popular automation server) what to do at each stage of your software development process)
 	• Now this pipeline involves bash scripting which will help you to run the python scripts you created in the first step.
