@@ -8,6 +8,7 @@ services:
     environment:
       - GF_SECURITY_ALLOW_EMBEDDING=true
       - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_OAUTH_LOGIN=true
     ports:
       - '3000:3000'
     volumes:
