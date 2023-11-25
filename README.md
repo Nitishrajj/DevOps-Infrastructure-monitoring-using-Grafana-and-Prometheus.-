@@ -10,7 +10,7 @@ Grafana serves as the visualization and dashboarding platform, providing an intu
 Dashboards are crafted to offer a real-time, consolidated view of critical metrics, empowering DevOps teams to make informed decisions promptly.
 The monitoring solution is designed to be scalable, accommodating the growth of the infrastructure. Grafana's flexibility ensures adaptability to diverse infrastructure setups, making it suitable for both small-scale and large-scale deployments.
 
-Prometheus -- 
+Prometheus --
 Prometheus acts as the core monitoring and alerting component, responsible for collecting and storing time-series data from various nodes in the infrastructure.
 Customizable Prometheus queries enable the extraction of relevant metrics, empowering operators to gain insights into resource utilization, system performance, and potential bottlenecks.
 
